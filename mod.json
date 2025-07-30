@@ -1,0 +1,17 @@
+{
+	"geode": "4.6.3",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "nwo5.better_select_all",
+	"name": "Better Select All",
+	"version": "v1.0.0",
+	"developer": "Nwo5",
+	"description": "select all but better",
+	"tags": ["enhancement", "utility", "editor", "offline"],
+	"links": {"source": "https://github.com/Nwo5-trg/Better-Select-All"},
+	"resources": {"sprites": ["resources/*.png"]}
+}
