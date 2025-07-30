@@ -22,9 +22,9 @@ bool BetterSelectAllPopup::setup() {
     m_mainLayer->addChild(buttonMenu);
 
     CCPoint buttonPositions[] {
-        ccp(-50.0f, 50.0f), ccp(0.0f, 50.0f), ccp(50.0f, 50.0f),
-        ccp(-50.0f, 0.0f), ccp(0.0f, 0.0f), ccp(50.0f, 0.0f),
-        ccp(-50.0f, -50.0f), ccp(0.0f, -50.0f), ccp(50.0f, -50.0f),
+        {-50.0f, 50.0f}, {0.0f, 50.0f}, {50.0f, 50.0f},
+        {-50.0f, 0.0f}, {0.0f, 0.0f}, {50.0f, 0.0f},
+        {-50.0f, -50.0f}, {0.0f, -50.0f}, {50.0f, -50.0f},
     };
 
     const char* buttonSprites[] {
@@ -65,17 +65,17 @@ bool BetterSelectAllPopup::setup() {
 
 void BetterSelectAllPopup::onSelectButton(CCObject* sender) {
     auto* editor = LevelEditorLayer::get();
-    
+    auto* ui = editor->m_editorUI;
     int tag = sender->getTag();
 
     auto center = ccp(0.0f, 0.0f);
     if (selectObjectMode) {
-        auto objs = editor->m_editorUI->getSelectedObjects();
+        auto objs = ui->getSelectedObjects();
         if (objs->count() == 0 && tag != 4) {
             onClose(nullptr);
             return;
         }
-        center = editor->m_editorUI->getGroupCenter(objs, true);
+        center = ui->getGroupCenter(objs, true);
     } else {
         auto size = CCDirector::get()->getWinSize();
         float zoom = editor->m_objectLayer->getScale();
@@ -84,61 +84,33 @@ void BetterSelectAllPopup::onSelectButton(CCObject* sender) {
         ) / zoom;
     }
 
+    CCPoint directions[] = {
+        {-1.0f,  1.0f}, {0.0f,  1.0f}, {1.0f,  1.0f},
+        {-1.0f,  0.0f}, {0.0f,  0.0f}, {1.0f,  0.0f},
+        {-1.0f, -1.0f}, {0.0f, -1.0f}, {1.0f, -1.0f}
+    };
+    auto dir = directions[tag];
+
     auto objs = editor->m_objects;
     auto array = CCArray::create();
-    
-    // ik i could refactor this or optimize or wtv but i dont care enough
-    switch (tag) {
-        case 0: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionX() <= center.x && obj->getPositionY() >= center.y) array->addObject(obj);
-            } break;
+    int layer = editor->m_currentLayer;
+
+    for (auto obj : CCArrayExt<GameObject>(objs)) {
+        if (tag != 4) {
+            auto pos = obj->getPosition() - center;
+            bool x = dir.x == 0 || pos.x * dir.x >= 0;
+            bool y = dir.y == 0 || pos.y * dir.y >= 0;
+            if (!x || !y) continue;
         }
-        case 1: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionY() >= center.y) array->addObject(obj);
-            } break;
-        }
-        case 2: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionX() >= center.x && obj->getPositionY() >= center.y) array->addObject(obj);
-            } break;
-        }
-        case 3: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionX() <= center.x) array->addObject(obj);
-            } break;
-        }
-        case 4: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                array->addObject(obj);
-            } break;
-        }
-        case 5: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionX() >= center.x) array->addObject(obj);
-            } break;
-        }
-        case 6: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionX() <= center.x && obj->getPositionY() <= center.y) array->addObject(obj);
-            } break;
-        }
-        case 7: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionY() <= center.y) array->addObject(obj);
-            } break;
-        }
-        case 8: {
-            for (auto obj : CCArrayExt<GameObject>(objs)) {
-                if (obj->getPositionX() >= center.x && obj->getPositionY() <= center.y) array->addObject(obj);
-            } break;
-        }
+        
+        if (layer != -1 && obj->m_editorLayer != layer && obj->m_editorLayer2 != layer) continue;
+
+        array->addObject(obj);
     }
 
-    editor->m_editorUI->selectObjects(array, true);
-    editor->m_editorUI->updateButtons();
-    editor->m_editorUI->updateObjectInfoLabel();
+    ui->selectObjects(array, true);
+    ui->updateButtons();
+    ui->updateObjectInfoLabel();
 
     onClose(nullptr);
 }
