@@ -1,3 +1,6 @@
+## v1.2.1
+- **Fixed** current layer
+
 ## v1.2.0
 - **Added** bypass all toggle
 - **Added** some refactoring

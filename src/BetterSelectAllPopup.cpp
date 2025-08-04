@@ -104,6 +104,7 @@ void BetterSelectAllPopup::onSelectButton(CCObject* sender) {
     }
 
     m_selectFilter = GameManager::get()->getIntGameVariable("0005");
+    m_currentLayer = m_editor->m_currentLayer;
     getLockedLayers();
 
     CCPoint directions[] = {
