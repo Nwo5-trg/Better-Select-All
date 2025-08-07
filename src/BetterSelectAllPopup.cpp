@@ -142,7 +142,7 @@ bool BetterSelectAllPopup::canSelect(GameObject* obj) {
     int layer1 = obj->m_editorLayer;
     int layer2 = obj->m_editorLayer2;
     if (m_lockedLayers[layer1] || m_lockedLayers[layer2]) return false;
-    if (m_currentLayer != -1 && layer1 != m_currentLayer && layer2 != m_currentLayer) return false;
+    if (m_currentLayer != -1 && layer1 != m_currentLayer && (layer2 != m_currentLayer || layer2 == 0)) return false;
     return true;
 }
 

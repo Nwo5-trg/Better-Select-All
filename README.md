@@ -14,4 +14,4 @@ only thing that isnt rly obvious is the togglers
 - **bypass all** does not check if an object *can* be selected, it just like selects cuz :3c 
 
 ## Credits
-***like all the hosts of cornbread megacollab i think*** for the mod idea
+***like all the hosts of cornbread megacollab i think*** for the mod idea and sub bug reports
